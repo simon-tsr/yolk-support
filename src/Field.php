@@ -310,7 +310,7 @@ class Field {
 
 	}
 
-	protected function processRules( array $rules ) {
+	protected function processRules( array $rules, $default_collection = '\\yolk\\support\\ObjectCollection' ) {
 
 		$this->required = $rules['required'];
 		$this->nullable = $rules['nullable'];
@@ -336,7 +336,7 @@ class Field {
 			if( empty($rules['class']) )
 				throw new \LogicException("Missing item class for collection: {$this->name}");
 
-			$rules['collection'] = empty($rules['collection']) ? '\\yolk\\model\\RelatedCollection' : $rules['collection'];
+			$rules['collection'] = empty($rules['collection']) ? $default_collection : $rules['collection'];
 
 			// replace default with closure to generate a new collection
 			$this->default = function() use ($rules) {
