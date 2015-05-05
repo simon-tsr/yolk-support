@@ -11,6 +11,8 @@
 
 namespace yolk\support;
 
+use yolk\contracts\support\Type;
+
 class Validator {
 
 	private function __construct() {}
