@@ -61,8 +61,8 @@ class Field {
 	}
 
 	public function __get( $key ) {
-		if( $key == 'default' && ($this->default instanceof \Closure) )
-			return $this->default();
+		if( $key == 'default' )
+			return $this->getDefault();
 		elseif( isset($this->rules[$key]) )
 			return $this->rules[$key];
 		elseif( isset($this->$key) )
@@ -120,6 +120,10 @@ class Field {
 		return $this->type == Type::OBJECT;
 	}
 
+	public function isEntity() {
+		return $this->type == Type::ENTITY;
+	}
+
 	public function isCollection() {
 		return $this->type == Type::COLLECTION;
 	}
@@ -169,6 +173,17 @@ class Field {
 		else
 			return $this->validateRules($clean);
 
+	}
+
+	/**
+	 * Return the fields default value.
+	 * @return mixed
+	 */
+	protected function getDefault() {
+		if( $this->default instanceof \Closure )
+			return $this->default();
+		else
+			return $this->cast($this->default);
 	}
 
 	protected function validateType( $v, $type ) {
