@@ -200,6 +200,7 @@ class GenericFilter implements Filter, Arrayable {
 
 		if( in_array($modifier, ['+', '-']) ) {
 			$dir = ($modifier == '+');
+			$field = substr($field, 1);
 		}
 
 		$this->orderby[$field] = $dir;

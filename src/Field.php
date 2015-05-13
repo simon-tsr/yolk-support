@@ -2,11 +2,11 @@
 /*
  * This file is part of Yolk - Gamer Network's PHP Framework.
  *
- * Copyright (c) 2014 Gamer Network Ltd.
+ * Copyright (c) 2015 Gamer Network Ltd.
  * 
  * Distributed under the MIT License, a copy of which is available in the
  * LICENSE file that was bundled with this package, or online at:
- * https://github.com/gamernetwork/yolk
+ * https://github.com/gamernetwork/yolk-support
  */
 
 namespace yolk\support;
@@ -27,15 +27,9 @@ class Field {
 
 	protected $nullable;
 
-	protected $unique;
-
 	protected $default;
 
     protected $label;
-
-    protected $readonly;
-
-    protected $guarded;
 
 	protected $rules;
 
@@ -43,17 +37,14 @@ class Field {
 
 		$this->name = $name;
 		$this->type = $type;
-		
+
 		// default rules
-		$defaults = array(
+		$defaults = [
 			'required' => false,
 			'nullable' => false,
-			'unique'   => false,
 			'default'  => '',
             'label'    => $name,
-            'readonly' => false,
-            'guarded'  => false,
-		);
+		];
 		$rules += $defaults;
 
 		$this->processRules($rules);
@@ -81,11 +72,8 @@ class Field {
             'type'     => $this->type,
             'required' => $this->required,
             'nullable' => $this->nullable,
-            'unique'   => $this->unique,
             'default'  => $this->default,
             'label'    => $this->label,
-            'readonly' => $this->readonly,
-            'guarded'  => $this->guarded,
             'rules'    => $this->rules,
         ];
     }
@@ -118,14 +106,6 @@ class Field {
 
 	public function isObject() {
 		return $this->type == Type::OBJECT;
-	}
-
-	public function isEntity() {
-		return $this->type == Type::ENTITY;
-	}
-
-	public function isCollection() {
-		return $this->type == Type::COLLECTION;
 	}
 
 	public function cast( $v ) {
@@ -325,49 +305,27 @@ class Field {
 
 	}
 
-	protected function processRules( array $rules, $default_collection = '\\yolk\\support\\ObjectCollection' ) {
+	protected function processRules( array $rules ) {
 
 		$this->required = $rules['required'];
 		$this->nullable = $rules['nullable'];
-		$this->unique   = $rules['unique'];
 		$this->default  = $rules['default'];
         $this->label    = $rules['label'];
-        $this->readonly = $rules['readonly'];
-        $this->guarded  = $rules['guarded'];
 
 		unset(
 			$rules['required'],
 			$rules['nullable'],
-			$rules['unique'],
 			$rules['default'],
-			$rules['label'],
-			$rules['readonly'],
-			$rules['guarded']
+			$rules['label']
 		);
 
-		if( $this->isCollection() ) {
-
-			// collection fields must specify a class
-			if( empty($rules['class']) )
-				throw new \LogicException("Missing item class for collection: {$this->name}");
-
-			$rules['collection'] = empty($rules['collection']) ? $default_collection : $rules['collection'];
-
-			// replace default with closure to generate a new collection
-			$this->default = function() use ($rules) {
-				$collection = $rules['collection'];
-				return new $collection($rules['class']);
-			};
-
-		}
-		elseif( $this->isObject() ) {
+		if( $this->isObject() ) {
 
 			// object fields must specify a class
 			if( empty($rules['class']) )
 				throw new \LogicException("Missing class name for item: {$this->name}");
 
 			// replace default with closure to generate a new object
-			// TODO: should be generating a proxy?
 			$this->default = function() use ($rules) {
 				$object = $rules['class'];
 				return new $object();
