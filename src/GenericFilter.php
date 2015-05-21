@@ -36,7 +36,7 @@ class GenericFilter implements Filter, Arrayable {
 	}
 
 	public function getLimit() {
-		return $this->limit;
+		return $this->limit ?: PHP_INT_MAX;
 	}
 
 	public function getOffset() {
