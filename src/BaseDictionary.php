@@ -36,7 +36,7 @@ class BaseDictionary extends BaseCollection implements Dictionary {
 
 	}
 
-	public function remove( $key, $item ) {
+	public function remove( $key ) {
 		$current = $this->get($key);
 		unset($this->items[$key]);
 		return $current;
