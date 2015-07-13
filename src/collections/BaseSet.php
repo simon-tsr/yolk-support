@@ -9,7 +9,7 @@
  * https://github.com/gamernetwork/yolk-support
  */
 
-namespace yolk\support;
+namespace yolk\support\collections;
 
 use yolk\contracts\support\collections\Set;
 

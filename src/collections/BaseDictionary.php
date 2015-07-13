@@ -9,7 +9,7 @@
  * https://github.com/gamernetwork/yolk-support
  */
 
-namespace yolk\support;
+namespace yolk\support\collections;
 
 use yolk\contracts\support\collections\Dictionary;
 
@@ -22,11 +22,11 @@ class BaseDictionary extends BaseCollection implements Dictionary {
 		return array_key_exists($key, $this->items);
 	}
 
-	public function get( $key ) {
-		return isset($this->items[$key]) ? $this->items[$key] : null;
+	public function get( $key, $default = null ) {
+		return isset($this->items[$key]) ? $this->items[$key] : $default;
 	}
 
-	public function add( $key, $item ) {
+	public function set( $key, $item ) {
 
 		$current = $this->get($key);
 
