@@ -1,6 +1,8 @@
 
 # Yolk Support
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gamernetwork/yolk-support/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gamernetwork/yolk-support/?branch=master)
+
 Provides various supporting elements to the Yolk framework, such as:
 * Fieldsets and Fields
 * Validation
