@@ -168,7 +168,7 @@ class GenericFilter implements Filter, Arrayable {
 	 * @param  array          $values    values to match
 	 * @return self
 	 */
-	public function in( $field, array $values, $numeric = null ) {
+	public function in( $field, array $values ) {
 		return $this->addCriteria($field, 'IN', $values);
 	}
 

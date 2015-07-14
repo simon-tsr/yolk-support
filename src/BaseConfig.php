@@ -35,6 +35,8 @@ class BaseConfig extends collections\BaseDictionary implements Config {
 
 	public function load( $file ) {
 
+		$config = [];
+
 		require $file;
 
 		if( !isset($config) || !is_array($config) )

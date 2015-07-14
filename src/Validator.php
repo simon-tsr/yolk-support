@@ -124,9 +124,9 @@ class Validator {
 		return static::validateDateTime($v, 'H:i:s');
 	}
 
-	public static function validateYear( $v, $min, $max ) {
+	public static function validateYear( $v, $min = 1900, $max = 2155 ) {
 		$v = static::validateInteger($v);
-		return ($v >= 1901) && ($v <= 2155);
+		return ($v >= $min) && ($v <= $max);
 	}
 
 	/**
@@ -166,9 +166,9 @@ class Validator {
 		// if it's a string then try and decode it
 		if( is_string($v) )
 			$v = json_decode($v, true);
-		// otherwise check we can encode it
+		// otherwise check we can encode it - we don't care about the function result
 		else
-			$enc = json_encode($v);
+			json_encode($v);
 
 		return (json_last_error() === JSON_ERROR_NONE) ? $v : false;
 

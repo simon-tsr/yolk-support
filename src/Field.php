@@ -116,10 +116,10 @@ class Field {
 			case Type::YEAR:
 				return (int) $v;
 			
-			case Type::FLOAT :
+			case Type::FLOAT:
 				return (float) $v;
 			
-			case Type::BOOLEAN :
+			case Type::BOOLEAN:
 				return (bool) $v;
 			
 			case Type::DATETIME:

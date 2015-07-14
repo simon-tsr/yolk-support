@@ -20,7 +20,7 @@ class Fieldset implements \IteratorAggregate, \Countable {
 
 	/**
 	 * Array of fields defined in this fieldset.
-	 * @var arary
+	 * @var array
 	 */
 	protected $fields;
 
