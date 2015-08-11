@@ -105,7 +105,18 @@ class Field {
 	}
 
 	public function isObject() {
-		return $this->type == Type::OBJECT;
+		return in_array($this->type, [
+			Type::OBJECT,
+			Type::ENTITY,
+		]);
+	}
+
+	public function isEntity() {
+		return $this->type == Type::ENTITY;
+	}
+
+	public function isCollection() {
+		return $this->type == Type::COLLECTION;
 	}
 
 	public function cast( $v ) {
@@ -127,9 +138,10 @@ class Field {
 				return preg_match('/0000-00-00/', $v) ? '' : $v;
 			
 			case Type::JSON:
-				if( !is_array($v) && is_array($arr = json_decode($v, true)) ) {
+				if( !$v )
+					$v = [];
+				elseif( !is_array($v) && is_array($arr = json_decode($v, true)) )
 					$v = $arr;
-				}
 				return $v;
 
 			default:
@@ -160,10 +172,11 @@ class Field {
 	 * @return mixed
 	 */
 	protected function getDefault() {
-		if( $this->default instanceof \Closure )
-			return $this->default();
+		$default = $this->default;
+		if( $default instanceof \Closure )
+			return $default();
 		else
-			return $this->cast($this->default);
+			return $this->cast($default);
 	}
 
 	protected function validateType( $v, $type ) {
@@ -220,6 +233,7 @@ class Field {
 				$clean = Validator::validateJSON($v);
 				break;
 
+			case Type::ENTITY:
 			case Type::OBJECT:
 				$clean = Validator::validateObject($v, $this->rules['class']);
 				break;
