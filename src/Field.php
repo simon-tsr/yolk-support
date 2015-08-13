@@ -235,7 +235,7 @@ class Field {
 
 			case Type::ENTITY:
 			case Type::OBJECT:
-				$clean = Validator::validateObject($v, $this->rules['class']);
+				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
 				break;
 
 			case Type::BINARY:
@@ -339,11 +339,9 @@ class Field {
 			if( empty($rules['class']) )
 				throw new \LogicException("Missing class name for item: {$this->name}");
 
-			// replace default with closure to generate a new object
-			$this->default = function() use ($rules) {
-				$object = $rules['class'];
-				return new $object();
-			};
+			// object fields are nullable by default
+			$this->nullable = true;
+			$this->default  = null;
 
 		}
 

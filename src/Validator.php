@@ -174,8 +174,15 @@ class Validator {
 
 	}
 
-	public static function validateObject( $v, $class ) {
-		return $v instanceof $class ? $v : false;
+	public static function validateObject( $v, $class, $nullable = false ) {
+
+		if( $v instanceof $class )
+			return $v;
+		elseif( $nullable && ($v === null) )
+			return $v;
+
+		return false;
+
 	}
 
 }
