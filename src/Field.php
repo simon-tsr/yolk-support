@@ -152,9 +152,9 @@ class Field {
 
 	public function validate( $v ) {
 
-		if( $this->required && Validator::isEmpty($v) )
+		if( $this->required && Validator::isEmpty($v, $this->type) )
 			return [$v, Error::REQUIRED];
-		
+
 		elseif( !$this->nullable && ($v === null) )
 			return [$v, Error::NULL];
 
@@ -233,9 +233,12 @@ class Field {
 				$clean = Validator::validateJSON($v);
 				break;
 
-			case Type::ENTITY:
 			case Type::OBJECT:
 				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
+				break;
+
+			case Type::ENTITY:
+				$clean = Validator::validateEntity($v, $this->rules['class'], $this->nullable);
 				break;
 
 			case Type::BINARY:

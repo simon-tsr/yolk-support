@@ -11,6 +11,7 @@
 
 namespace yolk\support;
 
+use yolk\contracts\orm\Entity;
 use yolk\contracts\support\Type;
 
 class Validator {
@@ -51,6 +52,9 @@ class Validator {
 
 		switch( $type ) {
 
+			case Type::ENTITY:
+				return is_object($v) && !(bool) $v->id;
+
 			case Type::DATETIME:
 			case Type::DATE:
 			case Type::TIME:
@@ -61,9 +65,10 @@ class Validator {
 				return preg_match('/0.0.0.0/', $v) || (is_numeric($v) && !(int) $v);
 
 			default:
-				return false;
 
 		}
+
+		return false;
 
 	}
 
@@ -176,12 +181,26 @@ class Validator {
 
 	public static function validateObject( $v, $class, $nullable = false ) {
 
-		if( $v instanceof $class )
+		if( $v instanceof $class ) {
+			if( ($v instanceof Entity) && !$v->id )
+				return false;
 			return $v;
+		}
 		elseif( $nullable && ($v === null) )
 			return $v;
 
 		return false;
+
+	}
+
+	public static function validateEntity( $v, $class, $nullable = false ) {
+
+		$clean = static::validateObject($v, $class, $nullable);
+
+		if( $clean && !$clean->id )
+			return false;
+
+		return $clean;
 
 	}
 
