@@ -19,7 +19,7 @@ use yolk\contracts\support\collections\Collection;
  * Should not be implemented directly, instead use one of the more specific
  * sub-classes, such as BaseSet or BaseDictionary
  */
-class BaseCollection implements Collection, Arrayable {
+class BaseCollection implements \IteratorAggregate, Collection, Arrayable {
 
 	protected $items;
 
