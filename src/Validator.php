@@ -181,26 +181,13 @@ class Validator {
 
 	public static function validateObject( $v, $class, $nullable = false ) {
 
-		if( $v instanceof $class ) {
-			if( ($v instanceof Entity) && !$v->id )
-				return false;
+		if( $v instanceof $class )
 			return $v;
-		}
+
 		elseif( $nullable && ($v === null) )
 			return $v;
 
 		return false;
-
-	}
-
-	public static function validateEntity( $v, $class, $nullable = false ) {
-
-		$clean = static::validateObject($v, $class, $nullable);
-
-		if( $clean && !$clean->id )
-			return false;
-
-		return $clean;
 
 	}
 

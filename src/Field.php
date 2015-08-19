@@ -234,11 +234,8 @@ class Field {
 				break;
 
 			case Type::OBJECT:
-				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
-				break;
-
 			case Type::ENTITY:
-				$clean = Validator::validateEntity($v, $this->rules['class'], $this->nullable);
+				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
 				break;
 
 			case Type::BINARY:
@@ -322,7 +319,7 @@ class Field {
 
 	}
 
-	protected function processRules( array $rules ) {
+	protected function processRules( array $rules, $container = 'array' ) {
 
 		$this->required = $rules['required'];
 		$this->nullable = $rules['nullable'];
@@ -345,6 +342,27 @@ class Field {
 			// object fields are nullable by default
 			$this->nullable = true;
 			$this->default  = null;
+
+		}
+		elseif( $this->isCollection() ) {
+
+			// collection fields must specify a class
+			if( empty($rules['class']) )
+				throw new \LogicException("Missing item class for collection: {$this->name}");
+
+			$rules['container'] = empty($rules['container']) ? $container : $rules['container'];
+
+			// replace default with closure to generate a new collection
+			$this->default = function() use ($rules) {
+
+				$container = $rules['container'];
+
+				if( $container == 'array' )
+					return [];
+				else
+					return new $container($rules['class']);
+
+			};
 
 		}
 
