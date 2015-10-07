@@ -238,6 +238,10 @@ class Field {
 				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
 				break;
 
+			// case Type::COLLECTION:
+			// 	$clean = Validator::validateObject($v, $this->rules['container']);
+			// 	break;
+
 			case Type::BINARY:
 				$clean = (string) $v;
 				break;
