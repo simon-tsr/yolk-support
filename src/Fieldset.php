@@ -24,8 +24,11 @@ class Fieldset implements \IteratorAggregate, \Countable {
 	 */
 	protected $fields;
 
+	protected $types;
+
 	public function __construct() {
 		$this->fields = [];
+		$this->types  = [];
 	}
 
 	/**
@@ -37,6 +40,7 @@ class Fieldset implements \IteratorAggregate, \Countable {
 	 */
 	public function add( $name, $type = Type::TEXT, $rules = [] ) {
 		$this->fields[$name] = new Field($name, $type, $rules);
+		$this->types = [];	// clear this so it will be refreshed when we've finished adding fields
 		return $this;
 	}
 
@@ -94,6 +98,22 @@ class Fieldset implements \IteratorAggregate, \Countable {
 
 	public function count() {
 		return count($this->fields);
+	}
+
+	public function getByType( $type ) {
+
+		$type = strtolower($type);
+
+		if( !$this->types ) {
+			foreach( $this->fields as $field ) {
+				if( !isset($this->types[$field->type]) )
+					$this->types[$field->type] = [];
+				$this->types[$field->type][] = $field->name;
+			}
+		}
+
+		return isset($this->types[$type]) ? $this->types[$type] : [];
+
 	}
 
 }

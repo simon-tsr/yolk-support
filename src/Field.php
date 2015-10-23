@@ -100,8 +100,11 @@ class Field {
 			Type::IP,
 			Type::EMAIL,
 			Type::URL,
-			Type::JSON,
 		]);
+	}
+
+	public function isJSON() {
+		return $this->type == Type::JSON;
 	}
 
 	public function isObject() {
