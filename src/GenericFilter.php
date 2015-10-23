@@ -11,6 +11,7 @@
 
 namespace yolk\support;
 
+use yolk\contracts\database\Query;
 use yolk\contracts\support\Filter;
 use yolk\contracts\support\Arrayable;
 
@@ -227,6 +228,36 @@ class GenericFilter implements Filter, Arrayable {
 	public function limit( $limit )	 {
 		$this->limit = max(1, (int) $limit);
 		return $this;
+	}
+
+	/**
+	 * Apply the filter to a database Query
+	 * @param  Query  $query
+	 * @param  array  $columns a map of field names to database column names
+	 * @return Query
+	 */
+	public function toQuery( Query $query, array $columns = [] ) {
+
+		foreach( $this->criteria as $column => $criteria ) {
+			$column = isset($columns[$column]) ? $columns[$column] : $column;
+			foreach( $criteria as $operator => $value ) {
+				$query->where($column, $operator, $value);
+			}
+		}
+
+		foreach( $this->getOrder() as $column => $ascending ) {
+			$column = isset($columns[$column]) ? $columns[$column] : "{$column}";
+			$query->orderBy($column, $ascending);
+		}
+
+		if( $this->offset )
+			$query->offset($this->offset);
+
+		if( $this->limit )
+			$query->limit($this->limit);
+
+		return $query;
+
 	}
 
 	/**
