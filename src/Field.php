@@ -122,6 +122,10 @@ class Field {
 		return $this->type == Type::COLLECTION;
 	}
 
+	public function isUnique() {
+		return !empty($this->rules['unique']);
+	}
+
 	public function cast( $v ) {
 
 		switch( $this->type ) {

@@ -105,10 +105,17 @@ class Fieldset implements \IteratorAggregate, \Countable {
 		$type = strtolower($type);
 
 		if( !$this->types ) {
+			$this->types['unique'] = [];
 			foreach( $this->fields as $field ) {
+
 				if( !isset($this->types[$field->type]) )
 					$this->types[$field->type] = [];
+
 				$this->types[$field->type][] = $field->name;
+
+				if( $field->isUnique() )
+					$this->types['unique'][] = $field->name;
+
 			}
 		}
 
