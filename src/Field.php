@@ -3,7 +3,7 @@
  * This file is part of Yolk - Gamer Network's PHP Framework.
  *
  * Copyright (c) 2015 Gamer Network Ltd.
- * 
+ *
  * Distributed under the MIT License, a copy of which is available in the
  * LICENSE file that was bundled with this package, or online at:
  * https://github.com/gamernetwork/yolk-support
@@ -133,17 +133,17 @@ class Field {
 			case Type::TIMESTAMP:
 			case Type::YEAR:
 				return (int) $v;
-			
+
 			case Type::FLOAT:
 				return (float) $v;
-			
+
 			case Type::BOOLEAN:
 				return (bool) $v;
-			
+
 			case Type::DATETIME:
 			case Type::DATE:
 				return preg_match('/0000-00-00/', $v) ? '' : $v;
-			
+
 			case Type::JSON:
 				if( !$v )
 					$v = [];
