@@ -236,17 +236,23 @@ class GenericFilter implements Filter, Arrayable {
 	 * @param  array  $columns a map of field names to database column names
 	 * @return Query
 	 */
-	public function toQuery( Query $query, array $columns = [] ) {
+	public function toQuery( Query $query, array $columns = [], $alias = '' ) {
 
 		foreach( $this->criteria as $column => $criteria ) {
-			$column = isset($columns[$column]) ? $columns[$column] : $column;
+
+			if( !$column = $this->getColumnName($columns, $column, $alias) )
+				continue;
+
 			foreach( $criteria as $operator => $value ) {
 				$query->where($column, $operator, $value);
 			}
+
 		}
 
 		foreach( $this->getOrder() as $column => $ascending ) {
-			$column = isset($columns[$column]) ? $columns[$column] : "{$column}";
+			$column = $this->getColumnName($columns, $column, $alias);
+			if( !$column )
+				continue;
 			$query->orderBy($column, $ascending);
 		}
 
@@ -257,6 +263,23 @@ class GenericFilter implements Filter, Arrayable {
 			$query->limit($this->limit);
 
 		return $query;
+
+	}
+
+	protected function getColumnName( $columns, $column, $alias ) {
+
+		$column = isset($columns[$column]) ? $columns[$column] : $column;
+
+		if( !$column )
+			return '';
+
+		elseif( strpos($column, '.') )
+			return $column;
+
+		elseif( $alias )
+			return "{$alias}.{$column}";
+
+		return $column;
 
 	}
 
