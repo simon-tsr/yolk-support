@@ -33,7 +33,7 @@ use yolk\contracts\support\Arrayable;
  */
 class BaseConfig extends collections\BaseDictionary implements Config {
 
-	public function load( $file ) {
+	public function load( $file, $key = '' ) {
 
 		$config = [];
 
@@ -42,7 +42,12 @@ class BaseConfig extends collections\BaseDictionary implements Config {
 		if( !isset($config) || !is_array($config) )
 			throw new \LogicException('Invalid Configuration');
 
-		return $this->merge($config);
+		if( empty($key)  )
+			$this->merge($config);
+		else
+			$this->set($key, $config);
+
+		return $this;
 
 	}
 
