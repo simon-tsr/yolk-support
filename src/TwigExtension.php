@@ -70,6 +70,17 @@ class TwigExtension extends \Twig_Extension {
 			);
 		}
 
+		// more helpful shit from yolk-core/Inflector if we have it available
+		if( class_exists ('\\yolk\\helpers\\Inflector') ) {
+			$filters = array_merge(
+				$filters,
+				[
+					new \Twig_SimpleFilter('pluralise', ['\\yolk\\helpers\\Inflector', 'pluralise']),
+					new \Twig_SimpleFilter('singularise', ['\\yolk\\helpers\\Inflector', 'singularise']),
+				]
+			);
+		}
+
 		return $filters;
 
 	}
