@@ -53,7 +53,7 @@ class Validator {
 		switch( $type ) {
 
 			case Type::COLLECTION:
-				return count($v) == 0;
+				return count(array_filter($v)) == 0;
 
 			case Type::ENTITY:
 				return is_object($v) && !(bool) $v->id;
