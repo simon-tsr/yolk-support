@@ -188,82 +188,38 @@ class Field {
 
 	protected function validateType( $v, $type ) {
 
+		// Innocent until proven guilty
 		$error = Error::NONE;
+		$clean = $v;
 
-		switch( $type ) {
+		$validators = [
+			Type::TEXT     => 'validateText',
+			Type::INTEGER  => 'validateInteger',
+			Type::FLOAT    => 'validateFloat',
+			Type::BOOLEAN  => 'validateBoolean',
+			Type::DATETIME => 'validateDateTime',
+			Type::DATE     => 'validateDate',
+			Type::TIME     => 'validateTime',
+			Type::YEAR     => 'validateYear',
+			Type::EMAIL    => 'validateEmail',
+			Type::URL      => 'validateURL',
+			Type::IP       => 'validateIP',
+			Type::JSON     => 'validateJSON',
+		];
 
-			case Type::TEXT:
-				$clean = trim((string) $v);
-				break;
-
-			case Type::INTEGER:
-				$clean = Validator::validateInteger($v);
-				break;
-
-			case Type::FLOAT:
-				$clean = Validator::validateFloat($v);
-				break;
-
-			case Type::BOOLEAN:
-				$clean = Validator::validateBoolean($v);
-				break;
-
-			case Type::DATETIME:
-				$clean = Validator::validateDateTime($v);
-				break;
-
-			case Type::DATE:
-				$clean = Validator::validateDate($v);
-				break;
-
-			case Type::TIME:
-				$clean = Validator::validateTime($v);
-				break;
-
-			case Type::YEAR:
-				$clean = Validator::validateYear($v);
-				break;
-
-			case Type::EMAIL:
-				$clean = Validator::validateEmail($v);
-				break;
-
-			case Type::URL:
-				$clean = Validator::validateURL($v);
-				break;
-
-			case Type::IP:
-				$clean = Validator::validateIP($v);
-				break;
-
-			case Type::JSON:
-				$clean = Validator::validateJSON($v);
-				break;
-
-			case Type::OBJECT:
-			case Type::ENTITY:
-				$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
-				break;
-
-			// case Type::COLLECTION:
-			// 	$clean = Validator::validateObject($v, $this->rules['container']);
-			// 	break;
-
-			case Type::BINARY:
-				$clean = (string) $v;
-				break;
-
-			default:
-				// Don't handle other types as they should be validated elsewhere
-				$clean = $v;
-				break;
-
+		if( isset($validators[$type]) ) {
+			$method = $validators[$type];
+			$clean = Validator::$method($v);
+		}
+		elseif( in_array($type, [Type::OBJECT, Type::ENTITY]) ){
+			$clean = Validator::validateObject($v, $this->rules['class'], $this->nullable);
+		}
+		elseif( $type == Type::BINARY ) {
+			$clean = (string) $v;
 		}
 
 		// boolean fields will be null on error
-		if( $type == Type::BOOLEAN )
-			$error = ($clean === null) ? Error::BOOLEAN : Error::NONE;
-		elseif( $clean === false )
+		if( ($clean === false) || (($type == Type::BOOLEAN) && ($clean === null)) )
 			$error = Error::getTypeError($type);
 
 		return [$clean, $error];

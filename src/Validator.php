@@ -76,6 +76,16 @@ class Validator {
 	}
 
 	/**
+	 * Validates a string has the correct encoding and trims whitespace.
+	 * @param  string $v
+	 * @param  string $encoding
+	 * @return string|boolean Returns the trimmed string or false if incorrect encoding
+	 */
+	public static function validateText( $v, $encoding = 'UTF-8' ) {
+		return mb_check_encoding($v, $encoding) ? trim($v) : false;
+	}
+
+	/**
 	 * Validates a value as an integer.
 	 * Null, false and empty strings are converted to zero.
 	 * @param  mixed   $v
