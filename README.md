@@ -109,7 +109,40 @@ $c->load(__DIR__. 'config.php');	// 'config.php' should create an array called $
 
 ## Fieldsets and Fields
 
+A field represents an object property, database column or similar construct.
+Each field must have a name and a type and may optionally have additional rules
+defining rules for values that are considered valid.
 
+Supported field types are listed in `yolk\contracts\support\Type`.
+
+```php
+use yolk\support\Field;
+
+$f = new Field('id', Type::INTEGER);
+$f = new Field(
+	'status',
+	Type::ENUM,
+	[
+		'required' => true,
+		'values' => ['EMPLOYEE', 'PARTNER', 'OTHER']
+	]
+);
+$f = new Field('email', Type::EMAIL, ['required' => true, 'unique' => true]);
+```
+
+Available Rules:
+
+* `required` - [`boolean`] if true, must have a non-empty value (default: false)
+* `nullable` - [`boolean`] determines if null is an acceptable value (default: false)
+* `default` - [`mixed`] default value to use if none specified (default: empty based on type)
+* `label` - [`string`] user-friendly label, (default: title-cased name)
+* `unique` - [`boolean`] determines if values should be unique (default: false)
+* `min` - [`integer|string`] minimum acceptable value
+* `max` - [`integer|string`] maximum acceptable value
+* `min-length` - [`integer`] minimum length of value
+* `max-length` - [`integer`] maximum length of value
+* `regex` - [`string`] a regular expression that acceptable values must match
+* `values` - [`array`] an array containing all acceptable values
 
 ## Twig Extension
 
