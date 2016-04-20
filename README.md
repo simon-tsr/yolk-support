@@ -187,10 +187,39 @@ $f = new Fieldset();
 $f->add($name, $type = Type::TEXT, $rules = []);
 ```
 
-All Fields in the Fieldset can be validated at once by calling the `validate()` method.
+All Fields in the Fieldset can be validated at once by calling the `validate()` method
+and passing an array of field names and values.
 The return value is an array containing two elements, the first is an array of 'cleaned'
 values, indexed by Field name; the second is an array of validation errors, indexed by
 Field name.
+
+```php
+use yolk\contracts\support\Error;
+use yolk\support\Fieldset;
+
+$f = new Fieldset();
+
+$f->add('id', Type::INTEGER);
+$f->add('email', Type::EMAIL, ['required' => true, 'unique' => true]);
+
+
+$f->validate([
+	'id'    => '123',
+	'email' => 'bar',
+]);
+/*
+returns:
+[
+	[
+		'id'    => 123,
+		'email' => 'bar',
+],
+	[
+		'id'    => Error::NONE,
+		'email' => Error::EMAIL,
+	],
+]
+```
 
 ## Twig Extension
 
