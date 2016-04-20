@@ -110,7 +110,13 @@ $c->load(__DIR__. 'config.php');	// 'config.php' should create an array called $
 ## Fieldsets and Fields
 
 A field represents an object property, database column or similar construct.
-Each field must have a name and a type and may optionally have additional rules
+
+Fieldsets are collections of Fields and can be used as database table/model
+definitions, html form definitions, etc.
+
+### Fields
+
+A Field must have a name and a type and may optionally have additional rules
 defining rules for values that are considered valid.
 
 Supported field types are listed in `yolk\contracts\support\Type`.
@@ -119,6 +125,7 @@ Supported field types are listed in `yolk\contracts\support\Type`.
 use yolk\support\Field;
 
 $f = new Field('id', Type::INTEGER);
+$f = new Field('email', Type::EMAIL, ['required' => true, 'unique' => true]);
 $f = new Field(
 	'status',
 	Type::ENUM,
@@ -127,7 +134,6 @@ $f = new Field(
 		'values' => ['EMPLOYEE', 'PARTNER', 'OTHER']
 	]
 );
-$f = new Field('email', Type::EMAIL, ['required' => true, 'unique' => true]);
 ```
 
 Available Rules:
@@ -144,7 +150,95 @@ Available Rules:
 * `regex` - [`string`] a regular expression that acceptable values must match
 * `values` - [`array`] an array containing all acceptable values
 
+Specified rules are available as properties on a Field object; e.g. `$f->required`.
+Fields are immutable once instantiated.
+
+There are two methods provided for validation:
+
+* `cast()` - cast a specified value to the Field's type
+* `validate()` - validate a specified value against the Field's rules and return
+a 'cleaned' value and any validation error encountered. Supported errors are defined
+in `yolk\contracts\support\Error`.
+
+```php
+use yolk\contracts\support\Error;
+use yolk\support\Field;
+
+$f = new Field('id', Type::INTEGER, ['required' => true, 'min' => 0]);
+
+$f->cast(false);		// returns 0
+$f->cast('123fgh');		// returns 123
+$f->cast('fghsdfs');	// returns 0
+
+$f->validate(0);			// returns [0, Error::REQUIRED]
+$f->validate(false);		// returns [false, Error::REQUIRED]
+$f->validate('123fgh');		// returns [123, Error::NONE]
+$f->validate('fghsdfs');	// returns ['fghsdfs', Error::TYPE]
+$f->validate(-123);			// returns [-123, Error::MIN]
+```
+
+### Fieldsets
+
+Fields are added via the `add()` method:
+```php
+use yolk\support\Fieldset;
+
+$f = new Fieldset();
+$f->add($name, $type = Type::TEXT, $rules = []);
+```
+
+All Fields in the Fieldset can be validated at once by calling the `validate()` method.
+The return value is an array containing two elements, the first is an array of 'cleaned'
+values, indexed by Field name; the second is an array of validation errors, indexed by
+Field name.
+
 ## Twig Extension
+
+The Twig extension provides additional utility functionality to Twig environments.
+
+### Tests (is):
+* `numeric` - determines if a variable contains a numeric value
+* `integer` - determines if a variable contains an integer value
+* `string`  - determines if a variable is a string
+* `array`  - determines if a variable is an array
+* `object`  - determines if a variable is an object
+
+### Filters
+
+* `md5` - generate the md5 hash of a value
+* `sha1` - generate the sha1 hash of a value
+* `truncate` - truncate a value to a specified length
+* `sum` - generate the sum of an array, via `array_sum()`
+* `shuffle` - shuffle an array, via `shuffle()`
+
+### Functions
+
+* `ceil` - round a value up to next highest integer, via `ceil()`
+* `floor` - round a value down to next lowest integer, via `floor()`
+
+If the `yolk-core` package is detected, most Helper methods are included as
+filters or functions where there is no corresponding native functionality.
 
 ## Validation
 
+The `yolk\support\Validator` class contains static methods for validating values.
+Where possible validation is performed using PHP's built-in `filter_var()` function
+with appropriate flags.
+Validation function will return a valid value of the correct type, or an empty
+value of the correct type.
+
+* `isEmpty($v, $type = Type::TEXT)`
+* `validateText($v)`
+* `validateInteger($V)`
+* `validateFloat($v)`
+* `validateBoolean($v)`
+* `validateTimestamp($v)`
+* `validateDateTime($v, $format = 'Y-m-d H:i:s')`
+* `validateDate($v)`
+* `validateTime($v)`
+* `validateYear($v, $min = 1900, $max = 2155)`
+* `validateEmail($v)`
+* `validateIP($v)`
+* `validateURL($v)`
+* `validateJSON($v)`
+* `validateObject($v, $class, $nullable = false)`
