@@ -2,6 +2,7 @@ Want to work for Gamer Network? [We are hiring!](http://www.gamesindustry.biz/jo
 
 # Yolk Support
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b29ebddac5da4b5d963419fe956e2046)](https://app.codacy.com/app/simon-tsr/yolk-support?utm_source=github.com&utm_medium=referral&utm_content=simon-tsr/yolk-support&utm_campaign=badger)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gamernetwork/yolk-support/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/gamernetwork/yolk-support/?branch=develop)
 
 Provides various supporting elements to the Yolk framework, such as:
